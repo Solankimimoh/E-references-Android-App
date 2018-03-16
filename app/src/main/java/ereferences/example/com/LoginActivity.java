@@ -56,22 +56,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         auth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-        if (auth.getCurrentUser() != null) {
-            auth.signOut();
-            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-            finish();
-        }
+//        if (auth.getCurrentUser() != null) {
+//            auth.signOut();
+//            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
+//            finish();
+//        }
         initView();
 
 
-        initValidationRules();
+        //  initValidationRules();
 
 
     }
 
     private void initValidationRules() {
         String regexPassword = "(?=.*[a-z])(?=.*[A-Z])(?=.*[\\d])(?=.*[~`!@#\\$%\\^&\\*\\(\\)\\-_\\+=\\{\\}\\[\\]\\|\\;:\"<>,./\\?]).{8,}";
-        mAwesomeValidation.addValidation(LoginActivity.this, R.id.activity_faculty_registration_email_ed, android.util.Patterns.EMAIL_ADDRESS, R.string.val_err_email);
+        mAwesomeValidation.addValidation(LoginActivity.this, R.id.activity_signup_registration_email_ed, android.util.Patterns.EMAIL_ADDRESS, R.string.val_err_email);
         //        mAwesomeValidation.addValidation(LoginActivity.this, R.id.activity_signup_password_ed, regexPassword, R.string.err_password);
     }
 
@@ -165,6 +165,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void CheckLogin(final String firebaseTable) {
+
+        Toast.makeText(this, firebaseTable, Toast.LENGTH_SHORT).show();
 
         databaseReference.child(firebaseTable).addValueEventListener(new ValueEventListener() {
             @Override

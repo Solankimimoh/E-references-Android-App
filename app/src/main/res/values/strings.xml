@@ -30,6 +30,10 @@
     <string name="faculty_reg">Faculty Registration?</string>
     <string name="select_department">Select Department</string>
     <string name="select_semester">Select Semester</string>
+    <string name="addBooks">Upload Book</string>
+    <string name="bookTitle">Enter a Title for your file</string>
+    <string name="addCategory">Enter Category</string>
+    <string name="insertCategory">Add Category</string>
 
 
     <!--Department Array-->

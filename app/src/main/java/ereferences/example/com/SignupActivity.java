@@ -1,7 +1,6 @@
 package ereferences.example.com;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -70,15 +69,15 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         //Initilization of widgets
 
-        fullNameEd = findViewById(R.id.activity_faculty_registration_name_ed);
-        emailEd = findViewById(R.id.activity_faculty_registration_email_ed);
-        pwdEd = findViewById(R.id.activity_faculty_registration_password_ed);
+        fullNameEd = findViewById(R.id.activity_signup_registration_name_ed);
+        emailEd = findViewById(R.id.activity_signup_registration_email_ed);
+        pwdEd = findViewById(R.id.activity_signup_registration_password_ed);
         enrollmentEd = findViewById(R.id.activity_signup_enrollment_ed);
-        mobileEd = findViewById(R.id.activity_faculty_registration_mobile_ed);
-        departmentSp = findViewById(R.id.activity_faculty_registration_department_spinner);
+        mobileEd = findViewById(R.id.activity_signup_registration_mobile_ed);
+        departmentSp = findViewById(R.id.activity_signup_registration_department_spinner);
 
         alreadyRegisteredTv = findViewById(R.id.activity_signup_already_registered_txt);
-        signupBtn = findViewById(R.id.activity_faculty_registration_btn);
+        signupBtn = findViewById(R.id.activity_signup_registration_btn);
 
         progressDialog = new ProgressDialog(SignupActivity.this);
         progressDialog.setCancelable(false);
@@ -98,7 +97,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
             case R.id.activity_signup_already_registered_txt:
                 finish();
                 break;
-            case R.id.activity_faculty_registration_btn:
+            case R.id.activity_signup_registration_btn:
                 singupStudent();
                 break;
         }
@@ -162,7 +161,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         final Spinner spinner = (Spinner) adapterView;
         switch (spinner.getId()) {
-            case R.id.activity_faculty_registration_department_spinner:
+            case R.id.activity_signup_registration_department_spinner:
                 department = spinner.getSelectedItem().toString();
                 break;
         }

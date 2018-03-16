@@ -119,6 +119,10 @@ public class HomeActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        if (id == R.id.menu_add_category) {
+            Intent gotoAddCategory = new Intent(HomeActivity.this, AddCategoryActivity.class);
+            startActivity(gotoAddCategory);
+        }
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
