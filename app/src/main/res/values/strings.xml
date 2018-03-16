@@ -34,6 +34,9 @@
     <string name="bookTitle">Enter a Title for your file</string>
     <string name="addCategory">Enter Category</string>
     <string name="insertCategory">Add Category</string>
+    <string name="category_view">Category View</string>
+    <string name="addcate">Add Category</string>
+    <string name="chooseCategory">Select Category</string>
 
 
     <!--Department Array-->

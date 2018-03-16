@@ -9,7 +9,9 @@
     <Spinner
         android:id="@+id/activity_add_book_category_sp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:prompt="@string/chooseCategory"
+        android:spinnerMode="dialog" />
 
     <EditText
         android:id="@+id/activity_add_book_title_ed"
@@ -20,8 +22,7 @@
         android:textAppearance="@style/Base.TextAppearance.AppCompat.Large" />
 
     <Button
-
-        android:id="@+id/buttonUploadFile"
+        android:id="@+id/activity_add_book_upload_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/activity_add_book_title_ed"

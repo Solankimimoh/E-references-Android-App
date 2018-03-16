@@ -34,7 +34,7 @@ public class AddCategoryActivity extends AppCompatActivity implements View.OnCli
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_category);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseDatabase.getInstance().getReference(AppConstant.FIREBASE_TABLE_CATEGORY);
 
         initView();
 
@@ -85,7 +85,7 @@ public class AddCategoryActivity extends AppCompatActivity implements View.OnCli
             Toast.makeText(this, "Please Enter Name", Toast.LENGTH_SHORT).show();
         } else {
 
-            mDatabase.child(AppConstant.FIREBASE_TABLE_CATEGORY)
+            mDatabase.push()
                     .setValue(new CategoryModel(categoryName)
                             , new DatabaseReference.CompletionListener() {
                                 @Override
@@ -100,6 +100,7 @@ public class AddCategoryActivity extends AppCompatActivity implements View.OnCli
                                     }
                                 }
                             });
+
 
         }
 

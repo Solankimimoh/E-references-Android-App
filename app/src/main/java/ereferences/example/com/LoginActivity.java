@@ -2,6 +2,7 @@ package ereferences.example.com;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -85,6 +86,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         gotoSingup = findViewById(R.id.activity_login_goto_signup_txt);
         gotoForgotoPwd = findViewById(R.id.activity_login_forgot_pwd_txt);
 
+
         //ProgressDialog
         progressDialog = new ProgressDialog(LoginActivity.this);
         progressDialog.setCancelable(false);
@@ -138,7 +140,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 // Sign in success, update UI with the signed-in user's information
                                 Log.e(TAG, "signInWithEmail:success");
 
-                                progressDialog.setMessage("Email Verifying ....");
                                 switch (loginTypeRg.getCheckedRadioButtonId()) {
                                     case R.id.activity_login_admin_rb:
                                         CheckLogin(AppConstant.FIREBASE_TABLE_ADMIN);
@@ -165,8 +166,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     private void CheckLogin(final String firebaseTable) {
-
-        Toast.makeText(this, firebaseTable, Toast.LENGTH_SHORT).show();
 
         databaseReference.child(firebaseTable).addValueEventListener(new ValueEventListener() {
             @Override

@@ -34,6 +34,7 @@ public class HomeActivity extends AppCompatActivity
     //    Component Initlization
     private TextView userNameTv;
     private TextView userEmailTv;
+    private FloatingActionButton uploadBookFloatingActionButton;
 
     //    Firebase Init
     private DatabaseReference DataRef;
@@ -50,16 +51,26 @@ public class HomeActivity extends AppCompatActivity
 
         auth = FirebaseAuth.getInstance();
         DataRef = FirebaseDatabase.getInstance().getReference();
-
-        initView();
         final Intent intent = getIntent();
         loginType = intent.getStringExtra("KEY_LOGIN_TYPE");
+
+        initView();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         if (loginType.equals(AppConstant.FIREBASE_TABLE_STUDNET)) {
             navigationView.getMenu().clear();
             navigationView.inflateMenu(R.menu.home);
+            uploadBookFloatingActionButton.setVisibility(View.INVISIBLE);
         }
+
+        uploadBookFloatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent gotoAddBook = new Intent(HomeActivity.this, AddBookActivity.class);
+                startActivity(gotoAddBook);
+            }
+        });
+
         navigationView.setNavigationItemSelectedListener(this);
 
         //        get user name and email=
@@ -90,6 +101,7 @@ public class HomeActivity extends AppCompatActivity
 
     private void initView() {
 
+        uploadBookFloatingActionButton = findViewById(R.id.fab);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -122,11 +134,17 @@ public class HomeActivity extends AppCompatActivity
         if (id == R.id.menu_add_category) {
             Intent gotoAddCategory = new Intent(HomeActivity.this, AddCategoryActivity.class);
             startActivity(gotoAddCategory);
+        } else if (id == R.id.menu_view_category) {
+            Intent gotoViewCategory = new Intent(HomeActivity.this, ViewCategoryActivity.class);
+            startActivity(gotoViewCategory);
+        } else if (id == R.id.menu_signout) {
+            auth.signOut();
+            finish();
         }
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
-        return true;
+        return false;
     }
 }
