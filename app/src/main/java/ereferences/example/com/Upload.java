@@ -6,29 +6,21 @@ package ereferences.example.com;
 public class Upload {
 
     public String category;
-    public String name;
-    public String url;
+    public String bookName;
+    public String bookUrl;
+    public String thumbUrl;
+
 
     // Default constructor required for calls to
     // DataSnapshot.getValue(User.class)
     public Upload() {
     }
 
-    public Upload(String name, String url, String category) {
+    public Upload(String category, String bookName, String bookUrl, String thumbUrl) {
         this.category = category;
-        this.name = name;
-        this.url = url;
+        this.bookName = bookName;
+        this.bookUrl = bookUrl;
+        this.thumbUrl = thumbUrl;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public String getCategory() {
-        return category;
-    }
 }

@@ -16,6 +16,6 @@ public class AppConstant {
     final static String FIREBASE_TABLE_BOOK = "books";
 
     //FIREBASE STORAGE Constance
-    public static final String STORAGE_PATH_UPLOADS = "uploads/";
-    public static final String DATABASE_PATH_UPLOADS = "uploads";
+    public static final String STORAGE_PATH_UPLOADS_BOOKS = "books/";
+    public static final String STORAGE_PATH_UPLOADS_THUMBNAIL = "thumbnail/";
 }

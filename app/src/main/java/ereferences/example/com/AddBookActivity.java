@@ -1,16 +1,19 @@
 package ereferences.example.com;
 
-import android.*;
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
+import android.os.Environment;
+import android.os.ParcelFileDescriptor;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,7 +36,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.shockwave.pdfium.PdfDocument;
+import com.shockwave.pdfium.PdfiumCore;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class AddBookActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
@@ -58,6 +65,8 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
 
     //    variable
     private String category;
+    private String bookUrl;
+    private String thumbUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,7 +114,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
         progressDialog = new ProgressDialog(AddBookActivity.this);
         progressDialog.setCancelable(false);
         progressDialog.setTitle("Loading");
-        progressDialog.setMessage("getting category name....");
+        progressDialog.setMessage("getting category bookName....");
 
 //        listener init
         uploadBookBtn.setOnClickListener(this);
@@ -118,15 +127,21 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
         //for greater than lolipop versions we need the permissions asked on runtime
         //so if the permission is not available user will go to the screen to allow storage permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.READ_EXTERNAL_STORAGE)
+                Manifest.permission.READ_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-//            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS,
-//                    Uri.parse("package:" + getPackageName()));
-//            startActivity(intent);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
             return;
         } //creating an intent for file chooser
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && ContextCompat.checkSelfPermission(this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            return;
+        } //creating an intent for file chooser
+
         Intent intent = new Intent();
         intent.setType("application/pdf");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -142,7 +157,8 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
             //if a file is selected
             if (data.getData() != null) {
                 //uploading the file
-                uploadFile(data.getData());
+                uploadPdfFile(data.getData(), 0);
+                generateImageFromPdf(data.getData());
             } else {
                 Toast.makeText(this, "No file chosen", Toast.LENGTH_SHORT).show();
             }
@@ -152,9 +168,10 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
     //this method is uploading the file
     //the code is same as the previous tutorial
     //so we are not explaining it
-    private void uploadFile(Uri data) {
+    private void uploadPdfFile(final Uri data, final int code) {
         progressBar.setVisibility(View.VISIBLE);
-        StorageReference sRef = mStorageReference.child(AppConstant.STORAGE_PATH_UPLOADS + System.currentTimeMillis() + ".pdf");
+
+        StorageReference sRef = mStorageReference.child(AppConstant.STORAGE_PATH_UPLOADS_BOOKS + System.currentTimeMillis() + ".pdf");
         sRef.putFile(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @SuppressWarnings("VisibleForTests")
@@ -162,12 +179,46 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         progressBar.setVisibility(View.GONE);
                         textViewStatus.setText("File upload successfully");
+                        bookUrl = taskSnapshot.getDownloadUrl().toString();
 
-                        Upload upload = new Upload(
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @SuppressWarnings("VisibleForTests")
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                        Log.e("TAG UPLOAD", taskSnapshot.getBytesTransferred() + "  " + progress + "====" + (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+                        textViewStatus.setText("" + progress + "% Uploading...");
+                    }
+                });
+
+    }
+
+
+    private void uploadThumbFile(final Uri data) {
+        progressBar.setVisibility(View.VISIBLE);
+
+        StorageReference sRef = mStorageReference.child(AppConstant.STORAGE_PATH_UPLOADS_BOOKS + System.currentTimeMillis() + ".pdf");
+        sRef.putFile(data)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @SuppressWarnings("VisibleForTests")
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        progressBar.setVisibility(View.GONE);
+                        textViewStatus.setText("File upload successfully");
+                        thumbUrl = taskSnapshot.getDownloadUrl().toString();
+                        Upload upload = new Upload(category,
                                 bookTitleEd.getText().toString(),
-                                taskSnapshot.getDownloadUrl().toString(),
-                                category);
-
+                                bookUrl, thumbUrl
+                        );
                         mDatabase.child(AppConstant.FIREBASE_TABLE_BOOK).child(mDatabase.push().getKey()).setValue(upload);
 
                     }
@@ -189,6 +240,51 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
                     }
                 });
 
+    }
+
+    void generateImageFromPdf(Uri pdfUri) {
+        int pageNumber = 0;
+        PdfiumCore pdfiumCore = new PdfiumCore(this);
+        try {
+            //http://www.programcreek.com/java-api-examples/index.php?api=android.os.ParcelFileDescriptor
+            ParcelFileDescriptor fd = getContentResolver().openFileDescriptor(pdfUri, "r");
+            PdfDocument pdfDocument = pdfiumCore.newDocument(fd);
+            pdfiumCore.openPage(pdfDocument, pageNumber);
+            int width = pdfiumCore.getPageWidthPoint(pdfDocument, pageNumber);
+            int height = pdfiumCore.getPageHeightPoint(pdfDocument, pageNumber);
+            Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+            pdfiumCore.renderPageBitmap(pdfDocument, bmp, pageNumber, 0, 0, width, height);
+            saveImage(bmp);
+            pdfiumCore.closeDocument(pdfDocument); // important!
+        } catch (Exception e) {
+            //todo with exception
+        }
+    }
+
+    public final static String FOLDER = Environment.getExternalStorageDirectory() + "/PDF";
+
+    private void saveImage(Bitmap bmp) {
+        Log.e("LOCATION", FOLDER);
+        FileOutputStream out = null;
+        try {
+            File folder = new File(FOLDER);
+            if (!folder.exists())
+                folder.mkdirs();
+            File file = new File(folder, "PDF.png");
+            out = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
+            uploadThumbFile(Uri.fromFile(file));
+
+        } catch (Exception e) {
+            //todo with exception
+        } finally {
+            try {
+                if (out != null)
+                    out.close();
+            } catch (Exception e) {
+                //todo with exception
+            }
+        }
     }
 
 
