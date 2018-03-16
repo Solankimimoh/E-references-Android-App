@@ -42,6 +42,9 @@ import com.shockwave.pdfium.PdfiumCore;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 public class AddBookActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
@@ -67,6 +70,8 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
     private String category;
     private String bookUrl;
     private String thumbUrl;
+    private Map<String, String> uploadData = new HashMap<String, String>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -171,7 +176,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
     private void uploadPdfFile(final Uri data, final int code) {
         progressBar.setVisibility(View.VISIBLE);
 
-        StorageReference sRef = mStorageReference.child(AppConstant.STORAGE_PATH_UPLOADS_BOOKS + System.currentTimeMillis() + ".pdf");
+        final StorageReference sRef = FirebaseStorage.getInstance().getReference().child(AppConstant.STORAGE_PATH_UPLOADS_BOOKS + System.currentTimeMillis() + ".pdf");
         sRef.putFile(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @SuppressWarnings("VisibleForTests")
@@ -180,6 +185,10 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
                         progressBar.setVisibility(View.GONE);
                         textViewStatus.setText("File upload successfully");
                         bookUrl = taskSnapshot.getDownloadUrl().toString();
+                        Log.e("BOOK", taskSnapshot.getDownloadUrl().toString());
+                        uploadData.put("bookTitle", bookTitleEd.getText().toString().trim());
+                        uploadData.put("bookUrl", taskSnapshot.getDownloadUrl().toString());
+
 
                     }
                 })
@@ -206,7 +215,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
     private void uploadThumbFile(final Uri data) {
         progressBar.setVisibility(View.VISIBLE);
 
-        StorageReference sRef = mStorageReference.child(AppConstant.STORAGE_PATH_UPLOADS_BOOKS + System.currentTimeMillis() + ".pdf");
+        final StorageReference sRef = FirebaseStorage.getInstance().getReference().child(AppConstant.STORAGE_PATH_UPLOADS_THUMBNAIL + System.currentTimeMillis() + ".png");
         sRef.putFile(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @SuppressWarnings("VisibleForTests")
@@ -215,11 +224,12 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
                         progressBar.setVisibility(View.GONE);
                         textViewStatus.setText("File upload successfully");
                         thumbUrl = taskSnapshot.getDownloadUrl().toString();
-                        Upload upload = new Upload(category,
-                                bookTitleEd.getText().toString(),
-                                bookUrl, thumbUrl
-                        );
-                        mDatabase.child(AppConstant.FIREBASE_TABLE_BOOK).child(mDatabase.push().getKey()).setValue(upload);
+
+                        uploadData.put("category", category);
+                        uploadData.put("thumbUrl", taskSnapshot.getDownloadUrl().toString());
+                        Log.e("BOOK", uploadData + "");
+//                        Upload upload1= new Upload(upload.getCategory(),)
+                        mDatabase.child(AppConstant.FIREBASE_TABLE_BOOK).child(mDatabase.push().getKey()).setValue(uploadData);
 
                     }
                 })
@@ -236,7 +246,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
 
                         double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                         Log.e("TAG UPLOAD", taskSnapshot.getBytesTransferred() + "  " + progress + "====" + (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-                        textViewStatus.setText("" + progress + "% Uploading...");
+                        //   textViewStatus.setText("" + progress + "% Uploading...");
                     }
                 });
 
@@ -270,7 +280,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
             File folder = new File(FOLDER);
             if (!folder.exists())
                 folder.mkdirs();
-            File file = new File(folder, "PDF.png");
+            File file = new File(folder, random() + ".png");
             out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
             uploadThumbFile(Uri.fromFile(file));
@@ -287,6 +297,15 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    public static String random() {
+        final String ALLOWED_CHARACTERS = "0123456789qwertyuiopasdfghjklzxcvbnm";
+
+        final Random random = new Random();
+        final StringBuilder sb = new StringBuilder(5);
+        for (int i = 0; i < 5; ++i)
+            sb.append(ALLOWED_CHARACTERS.charAt(random.nextInt(ALLOWED_CHARACTERS.length())));
+        return sb.toString();
+    }
 
     @Override
     public void onClick(View v) {
