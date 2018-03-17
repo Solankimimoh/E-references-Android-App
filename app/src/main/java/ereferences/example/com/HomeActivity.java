@@ -1,9 +1,13 @@
 package ereferences.example.com;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -15,6 +19,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +43,9 @@ public class HomeActivity extends AppCompatActivity
     private TextView userNameTv;
     private TextView userEmailTv;
     private FloatingActionButton uploadBookFloatingActionButton;
+    private ArrayList<String> images;
+    ListView book_list;
+    ArrayAdapter<String> stringArrayAdapter;
 
     //    Firebase Init
     private DatabaseReference DataRef;
@@ -101,7 +112,21 @@ public class HomeActivity extends AppCompatActivity
 
     private void initView() {
 
+        book_list = findViewById(R.id.book_list);
         uploadBookFloatingActionButton = findViewById(R.id.fab);
+        images = new ArrayList<>();
+        stringArrayAdapter = new ArrayAdapter<String>(HomeActivity.this, android.R.layout.simple_expandable_list_item_1, images);
+        book_list.setAdapter(stringArrayAdapter);
+        fetchImages();
+
+        book_list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(parent.getItemAtPosition(position).toString()));
+                startActivity(browserIntent);
+            }
+        });
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -112,6 +137,40 @@ public class HomeActivity extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+    }
+
+    private void fetchImages() {
+
+
+        DataRef.child(AppConstant.FIREBASE_TABLE_BOOK).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot imglist : dataSnapshot.getChildren()) {
+                    for (DataSnapshot img : imglist.getChildren()) {
+                        BookImage bookImage = new BookImage();
+
+                        if (img.getKey().equals("thumbUrl")) {
+                            Log.e("THUMM", img.getValue() + "");
+                            bookImage.setUrl(img.getValue().toString());
+                            images.add(img.getValue().toString());
+                        }
+                        if (img.getKey().equals("bookTitle")) {
+                            bookImage.setName(img.getValue().toString());
+                        }
+
+                        stringArrayAdapter.notifyDataSetChanged();
+                    }
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 

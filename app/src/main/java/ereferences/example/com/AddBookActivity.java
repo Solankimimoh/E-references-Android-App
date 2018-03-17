@@ -297,6 +297,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
         }
     }
 
+    @NonNull
     public static String random() {
         final String ALLOWED_CHARACTERS = "0123456789qwertyuiopasdfghjklzxcvbnm";
 
