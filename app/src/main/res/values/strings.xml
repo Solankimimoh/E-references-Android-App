@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">E-references</string>
-
-    <string name="loginScreen">Login</string>
+    <string name="login_activity">Login</string>
     <string name="hint_email">Enter You Email</string>
     <string name="hint_pwd">Enter Your Password</string>
     <string name="login_btn">Login</string>
@@ -37,10 +36,13 @@
     <string name="category_view">Category View</string>
     <string name="addcate">Add Category</string>
     <string name="chooseCategory">Select Category</string>
+    <string name="book_download">Download</string>
+    <string name="book_online">Online read</string>
 
 
     <!--Department Array-->
     <string-array name="departmentArray">
+        <item>Information and Communication Technology</item>
         <item>Chemical engineering</item>
         <item>Computer engineering</item>
         <item>Civil engineering</item>

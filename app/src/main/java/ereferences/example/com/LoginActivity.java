@@ -2,7 +2,7 @@ package ereferences.example.com;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Color;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -57,11 +57,19 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         auth = FirebaseAuth.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference();
 
-//        if (auth.getCurrentUser() != null) {
+        final SharedPreferences pref = getSharedPreferences("MyPref", 0);
+
+        SharedPreferences.Editor editor = pref.edit();
+
+
+        if (auth.getCurrentUser() != null) {
+
 //            auth.signOut();
-//            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-//            finish();
-//        }
+            Intent gotoHome = new Intent(LoginActivity.this, HomeActivity.class);
+            gotoHome.putExtra("KEY_LOGIN_TYPE", pref.getString("KEY_LOGIN_TYPE", null));
+            startActivity(gotoHome);
+            finish();
+        }
         initView();
 
 
@@ -127,6 +135,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
 
 
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please Enter Details", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+
         if (mAwesomeValidation.validate()) {
 
             progressDialog.show();
@@ -178,6 +193,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
                     Log.e("TAG USER", dataSnapshot.child(auth.getCurrentUser().getUid()) + "");
                     progressDialog.hide();
+                    SharedPreferences pref = getApplicationContext().getSharedPreferences("MyPref", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = pref.edit();
+                    editor.putString("KEY_LOGIN_TYPE", firebaseTable);
+                    editor.commit();
                     Intent gotoHomeScreen = new Intent(LoginActivity.this, HomeActivity.class);
                     gotoHomeScreen.putExtra("KEY_LOGIN_TYPE", firebaseTable);
                     startActivity(gotoHomeScreen);

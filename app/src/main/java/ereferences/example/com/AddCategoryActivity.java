@@ -83,6 +83,7 @@ public class AddCategoryActivity extends AppCompatActivity implements View.OnCli
 
         if (categoryName.isEmpty()) {
             Toast.makeText(this, "Please Enter Name", Toast.LENGTH_SHORT).show();
+            progressDialog.dismiss();
         } else {
 
             mDatabase.push()

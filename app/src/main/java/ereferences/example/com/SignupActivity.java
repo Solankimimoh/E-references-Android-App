@@ -81,7 +81,7 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
         progressDialog = new ProgressDialog(SignupActivity.this);
         progressDialog.setCancelable(false);
-        progressDialog.setTitle("Singup");
+        progressDialog.setTitle("Signup");
         progressDialog.setMessage("Creating account");
 //        Listener implement
         alreadyRegisteredTv.setOnClickListener(this);

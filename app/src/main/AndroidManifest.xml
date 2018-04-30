@@ -15,18 +15,17 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".SplashScreenActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/loginScreen">
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ForgotPasswordActivity"
+            android:label="Forgot Password" />
         <activity
             android:name=".SignupActivity"
             android:label="@string/student" />
@@ -36,17 +35,14 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AddBookActivity"
-            android:label="@string/addBooks">
-
-        </activity>
+            android:label="@string/addBooks"></activity>
         <activity
             android:name=".AddCategoryActivity"
-            android:label="@string/addcate">
-
-        </activity>
+            android:label="@string/addcate"></activity>
         <activity
             android:name=".ViewCategoryActivity"
             android:label="@string/category_view" />
+        <activity android:name=".BookDetailsActivity"></activity>
     </application>
 
 </manifest>

@@ -65,8 +65,13 @@ public class ForgotPasswordActivity extends AppCompatActivity implements View.On
 
     private void resetPassword() {
         if (mAwesomeValidation.validate()) {
-         //   progressDialog.show();
+            //   progressDialog.show();
             final String email = forgotEmailEd.getText().toString();
+
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Please Enter Email ID", Toast.LENGTH_SHORT).show();
+                return;
+            }
             auth.sendPasswordResetEmail(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {

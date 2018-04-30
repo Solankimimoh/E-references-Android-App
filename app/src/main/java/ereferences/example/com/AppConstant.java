@@ -18,4 +18,8 @@ public class AppConstant {
     //FIREBASE STORAGE Constance
     public static final String STORAGE_PATH_UPLOADS_BOOKS = "books/";
     public static final String STORAGE_PATH_UPLOADS_THUMBNAIL = "thumbnail/";
+    public static final String KEY_BOOK_NAME = "KEY_BOOK_NAME";
+    public static final String KEY_BOOK_CATEGORY = "KEY_BOOK_CATEGORY";
+    public static final String KEY_BOOK_URL = "KEY_BOOK_URL";
+    public static final String KEY_BOOK_THUMB = "KEY_BOOK_THUMB";
 }

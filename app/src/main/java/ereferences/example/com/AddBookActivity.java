@@ -72,6 +72,9 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
     private String thumbUrl;
     private Map<String, String> uploadData = new HashMap<String, String>();
 
+    private Uri bookPdf;
+    private Uri bookThumb;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -176,19 +179,56 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
     private void uploadPdfFile(final Uri data, final int code) {
         progressBar.setVisibility(View.VISIBLE);
 
+        generateImageFromPdf(data);
+
         final StorageReference sRef = FirebaseStorage.getInstance().getReference().child(AppConstant.STORAGE_PATH_UPLOADS_BOOKS + System.currentTimeMillis() + ".pdf");
         sRef.putFile(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @SuppressWarnings("VisibleForTests")
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    public void onSuccess(UploadTask.TaskSnapshot booksnapshot) {
                         progressBar.setVisibility(View.GONE);
                         textViewStatus.setText("File upload successfully");
-                        bookUrl = taskSnapshot.getDownloadUrl().toString();
-                        Log.e("BOOK", taskSnapshot.getDownloadUrl().toString());
-                        uploadData.put("bookTitle", bookTitleEd.getText().toString().trim());
-                        uploadData.put("bookUrl", taskSnapshot.getDownloadUrl().toString());
+                        bookUrl = booksnapshot.getDownloadUrl().toString();
+                        Log.e("BOOK", booksnapshot.getDownloadUrl().toString());
 
+
+                        final StorageReference sRef = FirebaseStorage.getInstance().getReference().child(AppConstant.STORAGE_PATH_UPLOADS_THUMBNAIL + System.currentTimeMillis() + ".png");
+                        sRef.putFile(bookThumb)
+                                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                                    @SuppressWarnings("VisibleForTests")
+                                    @Override
+                                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                                        progressBar.setVisibility(View.GONE);
+                                        textViewStatus.setText("File upload successfully");
+                                        thumbUrl = taskSnapshot.getDownloadUrl().toString();
+//
+//                                        uploadData.put("category", category);
+//                                        uploadData.put("thumbUrl", taskSnapshot.getDownloadUrl().toString());
+//                                        Log.e("BOOK", uploadData + "");
+                                        BookDataModel upload1 = new BookDataModel(category, bookTitleEd.getText().toString(), bookUrl, thumbUrl);
+                                        mDatabase.child(AppConstant.FIREBASE_TABLE_BOOK).child(mDatabase.push().getKey()).setValue(upload1);
+                                        finish();
+
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        Log.e("UPLOAD", exception.getMessage());
+                                        Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                                    }
+                                })
+                                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                                    @SuppressWarnings("VisibleForTests")
+                                    @Override
+                                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+
+                                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+                                        Log.e("TAG UPLOAD", taskSnapshot.getBytesTransferred() + "  " + progress + "====" + (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+                                        //   textViewStatus.setText("" + progress + "% Uploading...");
+                                    }
+                                });
 
                     }
                 })
@@ -214,41 +254,42 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
 
     private void uploadThumbFile(final Uri data) {
         progressBar.setVisibility(View.VISIBLE);
-
-        final StorageReference sRef = FirebaseStorage.getInstance().getReference().child(AppConstant.STORAGE_PATH_UPLOADS_THUMBNAIL + System.currentTimeMillis() + ".png");
-        sRef.putFile(data)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @SuppressWarnings("VisibleForTests")
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        progressBar.setVisibility(View.GONE);
-                        textViewStatus.setText("File upload successfully");
-                        thumbUrl = taskSnapshot.getDownloadUrl().toString();
-
-                        uploadData.put("category", category);
-                        uploadData.put("thumbUrl", taskSnapshot.getDownloadUrl().toString());
-                        Log.e("BOOK", uploadData + "");
-//                        Upload upload1= new Upload(upload.getCategory(),)
-                        mDatabase.child(AppConstant.FIREBASE_TABLE_BOOK).child(mDatabase.push().getKey()).setValue(uploadData);
-
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                })
-                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                    @SuppressWarnings("VisibleForTests")
-                    @Override
-                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-
-                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                        Log.e("TAG UPLOAD", taskSnapshot.getBytesTransferred() + "  " + progress + "====" + (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-                        //   textViewStatus.setText("" + progress + "% Uploading...");
-                    }
-                });
+//
+//        final StorageReference sRef = FirebaseStorage.getInstance().getReference().child(AppConstant.STORAGE_PATH_UPLOADS_THUMBNAIL + System.currentTimeMillis() + ".png");
+//        sRef.putFile(data)
+//                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                    @SuppressWarnings("VisibleForTests")
+//                    @Override
+//                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                        progressBar.setVisibility(View.GONE);
+//                        textViewStatus.setText("File upload successfully");
+//                        thumbUrl = taskSnapshot.getDownloadUrl().toString();
+//
+//                        uploadData.put("category", category);
+//                        uploadData.put("thumbUrl", taskSnapshot.getDownloadUrl().toString());
+//                        Log.e("BOOK", uploadData + "");
+////                        BookDataModel upload1= new BookDataModel(upload.getCategory(),)
+//                        mDatabase.child(AppConstant.FIREBASE_TABLE_BOOK).child(mDatabase.push().getKey()).setValue(uploadData);
+//
+//                    }
+//                })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception exception) {
+//                        Log.e("UPLOAD", exception.getMessage());
+//                        Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+//                    }
+//                })
+//                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+//                    @SuppressWarnings("VisibleForTests")
+//                    @Override
+//                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+//
+//                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+//                        Log.e("TAG UPLOAD", taskSnapshot.getBytesTransferred() + "  " + progress + "====" + (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
+//                        //   textViewStatus.setText("" + progress + "% Uploading...");
+//                    }
+//                });
 
     }
 
@@ -283,7 +324,9 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
             File file = new File(folder, random() + ".png");
             out = new FileOutputStream(file);
             bmp.compress(Bitmap.CompressFormat.PNG, 100, out); // bmp is your Bitmap instance
-            uploadThumbFile(Uri.fromFile(file));
+
+            bookThumb = Uri.fromFile(file);
+//            uploadThumbFile(Uri.fromFile(file));
 
         } catch (Exception e) {
             //todo with exception
@@ -312,7 +355,12 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.activity_add_book_upload_btn:
-                getPDF();
+
+                if (bookTitleEd.getText().toString().isEmpty()) {
+                    Toast.makeText(this, "Please Enter Book Title", Toast.LENGTH_SHORT).show();
+                } else {
+                    getPDF();
+                }
                 break;
         }
     }
