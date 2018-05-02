@@ -15,7 +15,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".SplashScreenActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -35,14 +35,20 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".AddBookActivity"
-            android:label="@string/addBooks"></activity>
+            android:label="@string/addBooks" />
         <activity
             android:name=".AddCategoryActivity"
-            android:label="@string/addcate"></activity>
+            android:label="@string/addcate" />
         <activity
             android:name=".ViewCategoryActivity"
             android:label="@string/category_view" />
-        <activity android:name=".BookDetailsActivity"></activity>
+        <activity android:name=".BookDetailsActivity" />
+        <activity
+            android:name="com.folioreader.ui.folio.activity.FolioActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".BookReaderActivity" />
+        <activity android:name=".BookOfflineActivity"></activity>
     </application>
 
 </manifest>

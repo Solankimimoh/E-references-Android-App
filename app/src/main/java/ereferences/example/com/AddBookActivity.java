@@ -181,7 +181,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
 
         generateImageFromPdf(data);
 
-        final StorageReference sRef = FirebaseStorage.getInstance().getReference().child(AppConstant.STORAGE_PATH_UPLOADS_BOOKS + System.currentTimeMillis() + ".pdf");
+        final StorageReference sRef = FirebaseStorage.getInstance().getReference().child(AppConstant.STORAGE_PATH_UPLOADS_BOOKS + bookTitleEd.getText().toString().trim() + ".pdf");
         sRef.putFile(data)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @SuppressWarnings("VisibleForTests")
@@ -193,7 +193,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
                         Log.e("BOOK", booksnapshot.getDownloadUrl().toString());
 
 
-                        final StorageReference sRef = FirebaseStorage.getInstance().getReference().child(AppConstant.STORAGE_PATH_UPLOADS_THUMBNAIL + System.currentTimeMillis() + ".png");
+                        final StorageReference sRef = FirebaseStorage.getInstance().getReference().child(AppConstant.STORAGE_PATH_UPLOADS_THUMBNAIL + bookTitleEd.getText().toString().trim() + ".png");
                         sRef.putFile(bookThumb)
                                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                     @SuppressWarnings("VisibleForTests")

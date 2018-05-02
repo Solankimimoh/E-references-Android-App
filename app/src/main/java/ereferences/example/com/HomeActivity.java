@@ -63,6 +63,7 @@ public class HomeActivity extends AppCompatActivity
         initView();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+
         if (loginType.equals(AppConstant.FIREBASE_TABLE_STUDNET)) {
             navigationView.getMenu().clear();
             navigationView.inflateMenu(R.menu.home);
