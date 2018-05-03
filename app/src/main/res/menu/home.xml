@@ -14,6 +14,11 @@
             android:id="@+id/menu_download_book"
             android:icon="@drawable/vector_book_category"
             android:title="Downloaded Books" />
+
+        <item
+            android:id="@+id/menu_new_book_request"
+            android:icon="@drawable/vector_add"
+            android:title="Request for Book" />
         <item
             android:id="@+id/menu_signout"
             android:icon="@drawable/vector_logout"

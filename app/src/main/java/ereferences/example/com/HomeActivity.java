@@ -23,6 +23,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.takusemba.multisnaprecyclerview.MultiSnapRecyclerView;
 
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ public class HomeActivity extends AppCompatActivity
         loginType = intent.getStringExtra("KEY_LOGIN_TYPE");
 
         initView();
+        FirebaseMessaging.getInstance().subscribeToTopic("all");
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
 
@@ -176,7 +178,9 @@ public class HomeActivity extends AppCompatActivity
 
                                 if (categoryList.getKey().equals(bookList.child("category").getValue())) {
 
+//                                    Toast.makeText(HomeActivity.this, "" + bookList.getKey(), Toast.LENGTH_SHORT).show();
                                     if (bookList.child("bookUrl").getValue() != null && bookList.child("bookTitle") != null) {
+                                        bookDataModel.setBookKey(bookList.getKey());
                                         bookDataModel.setBookName(bookList.child("bookName").getValue().toString());
                                         bookDataModel.setBookUrl(bookList.child("bookUrl").getValue().toString());
                                         bookDataModel.setCategory(categoryList.child("categoryName").getValue().toString());
@@ -233,14 +237,26 @@ public class HomeActivity extends AppCompatActivity
         // Handle navigation view bookDataModel clicks here.
         int id = item.getItemId();
         if (id == R.id.menu_add_category) {
-            Intent gotoAddCategory = new Intent(HomeActivity.this, AddCategoryActivity.class);
+            final Intent gotoAddCategory = new Intent(HomeActivity.this, AddCategoryActivity.class);
             startActivity(gotoAddCategory);
         } else if (id == R.id.menu_view_category) {
-            Intent gotoViewCategory = new Intent(HomeActivity.this, ViewCategoryActivity.class);
+            final Intent gotoViewCategory = new Intent(HomeActivity.this, ViewCategoryActivity.class);
             startActivity(gotoViewCategory);
         } else if (id == R.id.menu_signout) {
             auth.signOut();
             finish();
+        } else if (id == R.id.menu_download_book) {
+            final Intent gotoOfflineBook = new Intent(HomeActivity.this, BookOfflineActivity.class);
+            startActivity(gotoOfflineBook);
+        } else if (id == R.id.menu_new_book_request) {
+            final Intent gotoRequestBook = new Intent(HomeActivity.this, RequestBookActivity.class);
+            startActivity(gotoRequestBook);
+        } else if (id == R.id.menu_request_book_list) {
+            final Intent gotoRequestBookList = new Intent(HomeActivity.this, RequestBookListActivity.class);
+            startActivity(gotoRequestBookList);
+        } else if (id == R.id.menu_aboutapp) {
+            final Intent gotoAboutApp = new Intent(HomeActivity.this, AboutAppActivity.class);
+            startActivity(gotoAboutApp);
         }
 
 
@@ -255,6 +271,7 @@ public class HomeActivity extends AppCompatActivity
 
         final Intent gotoBookDetails = new Intent(HomeActivity.this, BookDetailsActivity.class);
 
+        gotoBookDetails.putExtra(AppConstant.KEY_BOOK_PUSH_KEY, item.getBookKey());
         gotoBookDetails.putExtra(AppConstant.KEY_BOOK_NAME, item.getBookName());
         gotoBookDetails.putExtra(AppConstant.KEY_BOOK_CATEGORY, item.getCategory());
         gotoBookDetails.putExtra(AppConstant.KEY_BOOK_URL, item.getBookUrl());

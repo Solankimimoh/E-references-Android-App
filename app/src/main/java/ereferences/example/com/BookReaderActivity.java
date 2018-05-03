@@ -10,12 +10,13 @@ import android.widget.Toast;
 
 import com.github.barteksc.pdfviewer.PDFView;
 import com.github.barteksc.pdfviewer.listener.OnDrawListener;
+import com.github.barteksc.pdfviewer.listener.OnErrorListener;
 import com.github.barteksc.pdfviewer.listener.OnLoadCompleteListener;
 import com.github.barteksc.pdfviewer.listener.OnPageChangeListener;
 
 import java.io.File;
 
-public class BookReaderActivity extends AppCompatActivity implements OnLoadCompleteListener, OnPageChangeListener, OnDrawListener {
+public class BookReaderActivity extends AppCompatActivity implements OnLoadCompleteListener, OnPageChangeListener, OnDrawListener, OnErrorListener {
 
     private ProgressDialog progressDialog;
 
@@ -39,6 +40,7 @@ public class BookReaderActivity extends AppCompatActivity implements OnLoadCompl
                 .onLoad(this)
                 .spacing(20)
                 .onDraw(this)
+                .onError(this)
                 .onPageChange(this)
                 .load();
 
@@ -58,5 +60,11 @@ public class BookReaderActivity extends AppCompatActivity implements OnLoadCompl
     @Override
     public void onLayerDrawn(Canvas canvas, float pageWidth, float pageHeight, int displayedPage) {
 
+    }
+
+    @Override
+    public void onError(Throwable t) {
+
+        Log.e("LOAD ERROR", t.getMessage());
     }
 }

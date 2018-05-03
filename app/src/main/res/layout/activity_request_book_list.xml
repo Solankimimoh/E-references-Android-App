@@ -4,14 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BookOfflineActivity">
+    tools:context=".RequestBookListActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/activity_book_offline_books_list_rc"
-        android:layout_width="match_parent"
+        android:id="@+id/activity_request_book_list_rc"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
         android:scrollbars="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        tools:listitem="@layout/row_layout_offline_books_list" />
-
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:listitem="@layout/row_layout_book_review" />
 </android.support.constraint.ConstraintLayout>

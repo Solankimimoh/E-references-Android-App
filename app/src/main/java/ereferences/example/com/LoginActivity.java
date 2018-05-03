@@ -24,6 +24,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import static com.basgeekball.awesomevalidation.ValidationStyle.COLORATION;
 
@@ -190,6 +191,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     Toast.makeText(LoginActivity.this, "Credentials not match with login type", Toast.LENGTH_SHORT).show();
                     progressDialog.hide();
                 } else {
+                    FirebaseMessaging.getInstance().subscribeToTopic("all");
 
                     Log.e("TAG USER", dataSnapshot.child(auth.getCurrentUser().getUid()) + "");
                     progressDialog.hide();

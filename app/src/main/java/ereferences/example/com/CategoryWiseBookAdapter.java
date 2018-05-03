@@ -3,6 +3,7 @@ package ereferences.example.com;
 import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,16 +11,19 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+
 import java.util.ArrayList;
 
 
-public class BookOfflineAdapter extends RecyclerView.Adapter<BookOfflineAdapter.ViewHolder> {
+public class CategoryWiseBookAdapter extends RecyclerView.Adapter<CategoryWiseBookAdapter.ViewHolder> {
 
-    ArrayList<DownloadBookModel> mValues;
+    ArrayList<BookDataModel> mValues;
     Context mContext;
     protected ItemListener mListener;
 
-    public BookOfflineAdapter(Context context, ArrayList<DownloadBookModel> values, ItemListener itemListener) {
+    public CategoryWiseBookAdapter(Context context, ArrayList<BookDataModel> values, ItemListener itemListener) {
 
         mValues = values;
         mContext = context;
@@ -30,8 +34,7 @@ public class BookOfflineAdapter extends RecyclerView.Adapter<BookOfflineAdapter.
 
         public TextView textView;
         public ImageView imageView;
-        public RelativeLayout relativeLayout;
-        DownloadBookModel item;
+        BookDataModel item;
 
         public ViewHolder(View v) {
 
@@ -43,12 +46,24 @@ public class BookOfflineAdapter extends RecyclerView.Adapter<BookOfflineAdapter.
 
         }
 
-        public void setData(DownloadBookModel item) {
+        public void setData(BookDataModel item) {
             this.item = item;
 
 
-            textView.setText(item.getBookName());
-            imageView.setImageBitmap(BitmapFactory.decodeFile(item.getBookThumb()));
+
+            if (!item.getBookUrl().isEmpty() && !item.getBookName().isEmpty()) {
+                textView.setText(item.getBookName());
+
+
+                Log.e("URL", item.getBookName() + "sdfsdfdfdfdfdf");
+                Glide.with(mContext).load(item.getThumbUrl())
+                        .placeholder(R.drawable.no_thumb)
+                        .crossFade()
+                        .error(android.R.color.holo_red_light)
+                        .fallback(android.R.color.holo_orange_light)
+                        .diskCacheStrategy(DiskCacheStrategy.ALL)
+                        .into(imageView);
+            }
 
         }
 
@@ -82,6 +97,6 @@ public class BookOfflineAdapter extends RecyclerView.Adapter<BookOfflineAdapter.
     }
 
     public interface ItemListener {
-        void onItemClick(DownloadBookModel item);
+        void onItemClick(BookDataModel item);
     }
 }

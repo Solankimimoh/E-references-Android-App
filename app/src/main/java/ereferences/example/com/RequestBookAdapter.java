@@ -1,25 +1,22 @@
 package ereferences.example.com;
 
 import android.content.Context;
-import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 
-public class BookOfflineAdapter extends RecyclerView.Adapter<BookOfflineAdapter.ViewHolder> {
+public class RequestBookAdapter extends RecyclerView.Adapter<RequestBookAdapter.ViewHolder> {
 
-    ArrayList<DownloadBookModel> mValues;
+    ArrayList<RequestBookModel> mValues;
     Context mContext;
     protected ItemListener mListener;
 
-    public BookOfflineAdapter(Context context, ArrayList<DownloadBookModel> values, ItemListener itemListener) {
+    public RequestBookAdapter(Context context, ArrayList<RequestBookModel> values, ItemListener itemListener) {
 
         mValues = values;
         mContext = context;
@@ -28,27 +25,26 @@ public class BookOfflineAdapter extends RecyclerView.Adapter<BookOfflineAdapter.
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
-        public TextView textView;
-        public ImageView imageView;
-        public RelativeLayout relativeLayout;
-        DownloadBookModel item;
+        public TextView bookReviewAuthorTv;
+        public TextView bookReviewCommentTv;
+        RequestBookModel item;
 
         public ViewHolder(View v) {
 
             super(v);
 
             v.setOnClickListener(this);
-            textView = (TextView) v.findViewById(R.id.row_book_thumb_layout_book_name_tv);
-            imageView = (ImageView) v.findViewById(R.id.row_book_thumb_layout_book_thumb_img);
+            bookReviewAuthorTv = (TextView) v.findViewById(R.id.row_layout_book_review_author_tv);
+            bookReviewCommentTv = (TextView) v.findViewById(R.id.row_layout_book_review_comment_tv);
 
         }
 
-        public void setData(DownloadBookModel item) {
+        public void setData(RequestBookModel item) {
             this.item = item;
 
 
-            textView.setText(item.getBookName());
-            imageView.setImageBitmap(BitmapFactory.decodeFile(item.getBookThumb()));
+            bookReviewAuthorTv.setText(item.getRequesterName());
+            bookReviewCommentTv.setText(item.getRequestBookName());
 
         }
 
@@ -64,7 +60,7 @@ public class BookOfflineAdapter extends RecyclerView.Adapter<BookOfflineAdapter.
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-        View view = LayoutInflater.from(mContext).inflate(R.layout.row_book_thumb_layout, parent, false);
+        View view = LayoutInflater.from(mContext).inflate(R.layout.row_layout_book_review, parent, false);
 
         return new ViewHolder(view);
     }
@@ -82,6 +78,6 @@ public class BookOfflineAdapter extends RecyclerView.Adapter<BookOfflineAdapter.
     }
 
     public interface ItemListener {
-        void onItemClick(DownloadBookModel item);
+        void onItemClick(RequestBookModel item);
     }
 }

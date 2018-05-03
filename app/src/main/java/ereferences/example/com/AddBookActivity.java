@@ -25,6 +25,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +47,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.shockwave.pdfium.PdfDocument;
 import com.shockwave.pdfium.PdfiumCore;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -206,8 +218,9 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
 //                                        uploadData.put("category", category);
 //                                        uploadData.put("thumbUrl", taskSnapshot.getDownloadUrl().toString());
 //                                        Log.e("BOOK", uploadData + "");
-                                        BookDataModel upload1 = new BookDataModel(category, bookTitleEd.getText().toString(), bookUrl, thumbUrl);
+                                        BookDataModel upload1 = new BookDataModel("", category, bookTitleEd.getText().toString(), bookUrl, thumbUrl);
                                         mDatabase.child(AppConstant.FIREBASE_TABLE_BOOK).child(mDatabase.push().getKey()).setValue(upload1);
+                                        sendFCMPush();
                                         finish();
 
                                     }
@@ -398,4 +411,72 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
+
+    private void sendFCMPush() {
+
+        final String Legacy_SERVER_KEY = "AIzaSyDHcmG4vuD0Zf8LaJwG2fpog8ayC0WSlWY";
+        String msg = "Greetings! E-refence uploaded new Book ...";
+        String title = "New Book Uploaded";
+        //  String token = FCM_RECEIVER_TOKEN;
+
+        JSONObject obj = null;
+        JSONObject objData = null;
+        JSONObject dataobjData = null;
+
+        try {
+            obj = new JSONObject();
+            objData = new JSONObject();
+
+            objData.put("body", msg);
+            objData.put("title", title);
+            objData.put("sound", "default");
+            objData.put("icon", "icon_name"); //   icon_name image must be there in drawable
+            // objData.put("tag", token);
+
+            objData.put("priority", "high");
+
+            dataobjData = new JSONObject();
+            dataobjData.put("text", msg);
+            dataobjData.put("title", title);
+
+
+            obj.put("to", "/topics/" + "all");
+            //obj.put("to", token);
+            obj.put("priority", "high");
+
+            obj.put("notification", objData);
+            obj.put("data", dataobjData);
+            Log.e("!_@rj@_@@_PASS:>", obj.toString());
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsObjRequest = new JsonObjectRequest(Request.Method.POST, "https://fcm.googleapis.com/fcm/send", obj,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.e("!_@@_SUCESS", response + "");
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.e("!_@@_Errors--", error + "");
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Authorization", "key=" + Legacy_SERVER_KEY);
+                params.put("Content-Type", "application/json");
+                return params;
+            }
+        };
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        int socketTimeout = 1000 * 60;// 60 seconds
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        jsObjRequest.setRetryPolicy(policy);
+        requestQueue.add(jsObjRequest);
+    }
+
 }

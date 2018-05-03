@@ -38,6 +38,11 @@
     <string name="chooseCategory">Select Category</string>
     <string name="book_download">Download</string>
     <string name="book_online">Online read</string>
+    <string name="book_review">Enter Your Review for Book</string>
+    <string name="submit">Submit</string>
+    <string name="category">Category</string>
+    <string name="request_book">Enter Book name</string>
+    <string name="request">Request</string>
 
 
     <!--Department Array-->

@@ -10,26 +10,38 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.folioreader.FolioReader;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
-public class BookDetailsActivity extends AppCompatActivity implements View.OnClickListener {
+public class BookDetailsActivity extends AppCompatActivity implements View.OnClickListener, BookReviewAdapter.ItemListener {
 
     private TextView bookNameTv;
     private TextView bookCategoryTv;
@@ -37,19 +49,67 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
     private Button bookOnlineReadBtn;
     private ImageView bookThumbImg;
     private Intent bookDetailsIntent;
-    private FolioReader folioReader;
     private String bookUrl;
     private String bookThumbUrl;
     private ProgressDialog progressDialog;
+
+    //    bookReview
+    private EditText bookReviewCommentEd;
+    private Button bookReviewSubmitBtn;
+    private RecyclerView reviewRecyclerView;
+    private ArrayList<BookReviewModel> bookReviewModelArrayList;
+    private BookReviewAdapter bookReviewAdapter;
+    private FirebaseAuth firebaseAuth;
+    private DatabaseReference databaseReference;
+    private String bookPushKey;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_details);
+        firebaseAuth = FirebaseAuth.getInstance();
+        databaseReference = FirebaseDatabase.getInstance().getReference();
 
         initview();
 
         setData();
+        bookReviewAdapter = new BookReviewAdapter(BookDetailsActivity.this, bookReviewModelArrayList, this);
+
+        reviewRecyclerView.setNestedScrollingEnabled(false);
+        reviewRecyclerView.setAdapter(bookReviewAdapter);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(BookDetailsActivity.this, LinearLayoutManager.VERTICAL, false);
+        reviewRecyclerView.setLayoutManager(layoutManager);
+        reviewRecyclerView.addItemDecoration(new DividerItemDecoration(BookDetailsActivity.this,
+                DividerItemDecoration.VERTICAL));
+
+
+        databaseReference.child(AppConstant.FIREBASE_TABLE_BOOK_REVIEW).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (bookReviewModelArrayList.size() > 0) {
+                    bookReviewModelArrayList.clear();
+                }
+                for (DataSnapshot bookReviewList : dataSnapshot.getChildren()) {
+
+                    if (bookReviewList.child("bookPushKey").getValue().equals(bookPushKey)) {
+
+                        BookReviewModel bookReviewModel = new BookReviewModel();
+                        bookReviewModel.setReviewAuthor(bookReviewList.child("reviewAuthor").getValue().toString());
+                        bookReviewModel.setReviewComment(bookReviewList.child("reviewComment").getValue().toString());
+                        bookReviewModelArrayList.add(bookReviewModel);
+                        bookReviewAdapter.notifyDataSetChanged();
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
     }
 
     private void setData() {
@@ -68,7 +128,7 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
 
             bookUrl = bookDetailsIntent.getStringExtra(AppConstant.KEY_BOOK_URL);
 
-
+            bookPushKey = bookDetailsIntent.getStringExtra(AppConstant.KEY_BOOK_PUSH_KEY);
         }
 
 
@@ -82,12 +142,17 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
         bookThumbImg = findViewById(R.id.activity_book_details_thumb_img);
         bookOnlineReadBtn = findViewById(R.id.activity_book_details_online_read_btn);
 
-        folioReader = FolioReader.getInstance(BookDetailsActivity.this);
+        bookReviewSubmitBtn = findViewById(R.id.activity_book_details_review_btn);
+        bookReviewCommentEd = findViewById(R.id.activity_book_details_review_ed);
+        reviewRecyclerView = findViewById(R.id.activity_book_details_review_rc);
 
+        bookReviewModelArrayList = new ArrayList<>();
         bookDetailsIntent = getIntent();
+
 
         bookOnlineReadBtn.setOnClickListener(this);
         bookDownloadOfflineBtn.setOnClickListener(this);
+        bookReviewSubmitBtn.setOnClickListener(this);
 
         progressDialog = new ProgressDialog(BookDetailsActivity.this);
         progressDialog.setTitle("Opening Book");
@@ -106,7 +171,33 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
                 break;
             case R.id.activity_book_details_download_btn:
                 downloadBook();
+                break;
+            case R.id.activity_book_details_review_btn:
+                bookReview();
         }
+    }
+
+    private void bookReview() {
+        final String bookReview = bookReviewCommentEd.getText().toString().trim();
+
+        if (bookReview.isEmpty()) {
+            Toast.makeText(this, "Please Enter Review", Toast.LENGTH_SHORT).show();
+        } else {
+            final String reviewAuthor = firebaseAuth.getCurrentUser().getEmail().replace("@gmail.com", "");
+            BookReviewModel bookReviewModel = new BookReviewModel(bookPushKey, reviewAuthor, bookReview);
+            bookReviewModelArrayList.add(bookReviewModel);
+            bookReviewAdapter.notifyDataSetChanged();
+
+            databaseReference.child(AppConstant.FIREBASE_TABLE_BOOK_REVIEW).push().setValue(bookReviewModel).addOnCompleteListener(BookDetailsActivity.this, new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+
+                    Toast.makeText(BookDetailsActivity.this, "Thank You for review", Toast.LENGTH_SHORT).show();
+                    bookReviewCommentEd.setText("");
+                }
+            });
+        }
+
     }
 
     private void downloadBook() {
@@ -207,6 +298,11 @@ public class BookDetailsActivity extends AppCompatActivity implements View.OnCli
 
         }
 
+
+    }
+
+    @Override
+    public void onItemClick(BookReviewModel item) {
 
     }
 }

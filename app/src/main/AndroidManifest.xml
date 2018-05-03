@@ -43,12 +43,27 @@
             android:name=".ViewCategoryActivity"
             android:label="@string/category_view" />
         <activity android:name=".BookDetailsActivity" />
-        <activity
-            android:name="com.folioreader.ui.folio.activity.FolioActivity"
-            android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".BookReaderActivity" />
-        <activity android:name=".BookOfflineActivity"></activity>
+        <activity android:name=".BookOfflineActivity" />
+        <activity android:name=".CategoryWiseBookActivity" />
+        <activity android:name=".RequestBookActivity" />
+        <activity android:name=".RequestBookListActivity" />
+        <activity android:name=".AboutAppActivity"></activity>
+
+        <service android:name=".FirebaseNotificationToken">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

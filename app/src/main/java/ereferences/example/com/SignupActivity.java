@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -105,7 +106,6 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
 
     private void singupStudent() {
 
-        progressDialog.show();
 
         fullname = fullNameEd.getText().toString().trim();
         email = emailEd.getText().toString().trim();
@@ -113,47 +113,64 @@ public class SignupActivity extends AppCompatActivity implements View.OnClickLis
         enrollment = enrollmentEd.getText().toString().trim();
         mobile = mobileEd.getText().toString().trim();
 
-        auth.createUserWithEmailAndPassword(email, password)
-                .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (!task.isSuccessful()) {
-                            if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                Toast.makeText(SignupActivity.this, "User with this email already exist.", Toast.LENGTH_SHORT).show();
-                                progressDialog.hide();
-                            }
-                            progressDialog.hide();
-                            Toast.makeText(SignupActivity.this, task.getException() + "", Toast.LENGTH_SHORT).show();
-                            Log.e("TAG", task.getException() + "");
+        if (!fullname.isEmpty() && !email.isEmpty() && !password.isEmpty() && !enrollment.isEmpty() && !mobile.isEmpty()) {
 
-                        } else {
-                            final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            String userId = user.getUid();
+            if (Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                if (password.length() > 6) {
+                    progressDialog.show();
 
-                            mDatabase.child(userId)
-                                    .setValue(new StudentModel(fullname
-                                                    , email
-                                                    , password
-                                                    , enrollment
-                                                    , mobile
-                                                    , department),
-                                            new DatabaseReference.CompletionListener() {
-                                                @Override
-                                                public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                    auth.createUserWithEmailAndPassword(email, password)
+                            .addOnCompleteListener(SignupActivity.this, new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (!task.isSuccessful()) {
+                                        if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                                            Toast.makeText(SignupActivity.this, "User with this email already exist.", Toast.LENGTH_SHORT).show();
+                                            progressDialog.hide();
+                                        }
+                                        progressDialog.hide();
+                                        Toast.makeText(SignupActivity.this, task.getException() + "", Toast.LENGTH_SHORT).show();
+                                        Log.e("TAG", task.getException() + "");
 
-                                                    if (databaseError != null) {
-                                                        Toast.makeText(SignupActivity.this, databaseError.toString(), Toast.LENGTH_SHORT).show();
-                                                    } else {
-                                                        Toast.makeText(SignupActivity.this, "Success ! Signup is done", Toast.LENGTH_SHORT).show();
-                                                        finish();
-                                                        progressDialog.hide();
+                                    } else {
+                                        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                        String userId = user.getUid();
 
-                                                    }
-                                                }
-                                            });
-                        }
-                    }
-                });
+                                        mDatabase.child(userId)
+                                                .setValue(new StudentModel(fullname
+                                                                , email
+                                                                , password
+                                                                , enrollment
+                                                                , mobile
+                                                                , department),
+                                                        new DatabaseReference.CompletionListener() {
+                                                            @Override
+                                                            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+
+                                                                if (databaseError != null) {
+                                                                    Toast.makeText(SignupActivity.this, databaseError.toString(), Toast.LENGTH_SHORT).show();
+                                                                } else {
+                                                                    Toast.makeText(SignupActivity.this, "Success ! Signup is done", Toast.LENGTH_SHORT).show();
+                                                                    finish();
+                                                                    progressDialog.hide();
+
+                                                                }
+                                                            }
+                                                        });
+                                    }
+                                }
+                            });
+                } else {
+                    Toast.makeText(this, "Please Enter 6 to 16 digit password", Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(this, "Please Enter Valid Email ID", Toast.LENGTH_SHORT).show();
+            }
+        } else {
+            Toast.makeText(this, "Please fill details", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     @Override

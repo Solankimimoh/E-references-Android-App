@@ -1,47 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="210dp"
+        android:layout_margin="5dp"
         card_view:cardCornerRadius="0dp"
-        card_view:cardElevation="10dp"
-        card_view:cardMaxElevation="10dp"
-        card_view:contentPadding="10dp">
+        card_view:cardElevation="2dp"
+        card_view:cardMaxElevation="2dp"
+        card_view:contentPadding="5dp">
 
 
         <RelativeLayout
             android:id="@+id/row_layout_home_relativeLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_gravity="center">
+            android:orientation="vertical">
 
             <ImageView
                 android:id="@+id/row_layout_offline_books_list_book_img"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:layout_centerInParent="true"
-                android:tint="@android:color/white"
+                android:layout_height="160dp"
+                android:contentDescription="@null"
                 android:padding="5dp"
                 android:scaleType="centerCrop"
-                android:contentDescription="@null" />
+                tools:src="@drawable/erefernce_logo" />
 
 
             <TextView
                 android:id="@+id/row_layout_offline_books_list_book_name_tv"
-                android:text="@string/signup"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/row_layout_offline_books_list_book_img"
                 android:layout_centerHorizontal="true"
-                android:textColor="@android:color/white"
-
-                android:layout_below="@+id/row_layout_offline_books_list_book_img" />
+                android:layout_marginTop="10dp"
+                android:ellipsize="end"
+                android:maxEms="11"
+                android:maxLines="1"
+                android:text="@string/signup"
+                android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium" />
 
 
         </RelativeLayout>

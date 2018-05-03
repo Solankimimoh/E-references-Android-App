@@ -16,10 +16,11 @@
             android:id="@+id/menu_view_category"
             android:icon="@drawable/vector_view"
             android:title="View Category" />
-        <!--<item-->
-            <!--android:id="@+id/menu_download_book"-->
-            <!--android:icon="@drawable/vector_book_category"-->
-            <!--android:title="Download Books" />-->
+
+        <item
+            android:id="@+id/menu_request_book_list"
+            android:icon="@drawable/vector_book_category"
+            android:title="View Book Request" />
         <item
             android:id="@+id/menu_signout"
             android:icon="@drawable/vector_logout"

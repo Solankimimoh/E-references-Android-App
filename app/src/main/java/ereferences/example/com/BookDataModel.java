@@ -5,6 +5,7 @@ package ereferences.example.com;
  */
 public class BookDataModel {
 
+    public String bookKey = "";
     public String category = "";
     public String bookName = "";
     public String bookUrl = "";
@@ -16,13 +17,21 @@ public class BookDataModel {
     public BookDataModel() {
     }
 
-    public BookDataModel(String category, String bookName, String bookUrl, String thumbUrl) {
+    public BookDataModel(String bookKey, String category, String bookName, String bookUrl, String thumbUrl) {
+        this.bookKey = bookKey;
         this.category = category;
         this.bookName = bookName;
         this.bookUrl = bookUrl;
         this.thumbUrl = thumbUrl;
     }
 
+    public String getBookKey() {
+        return bookKey;
+    }
+
+    public void setBookKey(String bookKey) {
+        this.bookKey = bookKey;
+    }
 
     public String getCategory() {
         return category;
