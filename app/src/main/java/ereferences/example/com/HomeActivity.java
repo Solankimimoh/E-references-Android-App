@@ -41,6 +41,8 @@ public class HomeActivity extends AppCompatActivity
 
 
     private ArrayList<BookDataModel> bookDataModelArrayList;
+    private ArrayList<BookDataModel> cat1;
+    private ArrayList<BookDataModel> cat2;
     private BookThumbAdapter bookThumbAdapter;
 
     RecyclerView bookListRecyclerView;
@@ -52,6 +54,8 @@ public class HomeActivity extends AppCompatActivity
 
     //    variable
     private String loginType;
+    private BookThumbAdapter cat1adapter;
+    private BookThumbAdapter cat2adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,7 +121,13 @@ public class HomeActivity extends AppCompatActivity
         uploadBookFloatingActionButton = findViewById(R.id.fab);
 
         bookDataModelArrayList = new ArrayList<>();
+        cat1 = new ArrayList<>();
+        cat2 = new ArrayList<>();
+
+
         bookThumbAdapter = new BookThumbAdapter(HomeActivity.this, bookDataModelArrayList, this);
+        cat1adapter = new BookThumbAdapter(HomeActivity.this, cat1, this);
+        cat2adapter = new BookThumbAdapter(HomeActivity.this, cat2, this);
 //        bookListRecyclerView.setAdapter(stringArrayAdapter);
         fetchImages();
 
@@ -131,13 +141,13 @@ public class HomeActivity extends AppCompatActivity
         MultiSnapRecyclerView secondRecyclerView = (MultiSnapRecyclerView) findViewById(R.id.second_recycler_view);
         LinearLayoutManager secondManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         secondRecyclerView.setLayoutManager(secondManager);
-        secondRecyclerView.setAdapter(bookThumbAdapter);
+        secondRecyclerView.setAdapter(cat1adapter);
 
 
         MultiSnapRecyclerView thirdRecyclerView = (MultiSnapRecyclerView) findViewById(R.id.third_recycler_view);
         LinearLayoutManager thirdManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         thirdRecyclerView.setLayoutManager(thirdManager);
-        thirdRecyclerView.setAdapter(bookThumbAdapter);
+        thirdRecyclerView.setAdapter(cat2adapter);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -191,6 +201,15 @@ public class HomeActivity extends AppCompatActivity
                                         Log.e("LIST", bookDataModel.getBookName());
                                         bookDataModelArrayList.add(bookDataModel);
                                         bookThumbAdapter.notifyDataSetChanged();
+
+                                        if (categoryList.child("categoryName").getValue().equals("Artificial Intelligence")) {
+                                            cat1.add(bookDataModel);
+                                            cat1adapter.notifyDataSetChanged();
+                                        }
+                                        if (categoryList.child("categoryName").getValue().equals("Android")) {
+                                            cat2.add(bookDataModel);
+                                            cat2adapter.notifyDataSetChanged();
+                                        }
                                     } else {
                                         Toast.makeText(HomeActivity.this, "NOT RUN", Toast.LENGTH_SHORT).show();
                                     }
@@ -282,6 +301,9 @@ public class HomeActivity extends AppCompatActivity
         } else if (id == R.id.menu_aboutapp) {
             final Intent gotoAboutApp = new Intent(HomeActivity.this, AboutAppActivity.class);
             startActivity(gotoAboutApp);
+        } else if (id == R.id.menu_developer) {
+            final Intent gotoMenuDeveloper = new Intent(HomeActivity.this, DeveloperActivity.class);
+            startActivity(gotoMenuDeveloper);
         }
 
 

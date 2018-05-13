@@ -43,6 +43,7 @@
     <string name="category">Category</string>
     <string name="request_book">Enter Book name</string>
     <string name="request">Request</string>
+    <string name="appmoto">This application is specifically designed for engineers.Our main motive is \"Spend less,Read more\".</string>
 
 
     <!--Department Array-->

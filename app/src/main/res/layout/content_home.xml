@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="Category 1"
+            android:text="Artificial Intelligence"
             android:textSize="16sp" />
 
         <com.takusemba.multisnaprecyclerview.MultiSnapRecyclerView
@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="category 2"
+            android:text="Android"
             android:textSize="16sp" />
 
         <com.takusemba.multisnaprecyclerview.MultiSnapRecyclerView
@@ -60,9 +60,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginBottom="20dp"
             android:orientation="horizontal"
             app:msrv_gravity="end"
-            android:layout_marginBottom="20dp"
             app:msrv_ms_per_inch="200"
             app:msrv_snap_count="3" />
 

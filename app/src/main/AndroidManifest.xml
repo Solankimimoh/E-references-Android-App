@@ -16,16 +16,13 @@
         <activity
             android:name=".SplashScreenActivity"
             android:theme="@style/AppTheme.NoActionBar">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity">
-
-        </activity>
+        <activity android:name=".LoginActivity"></activity>
         <activity
             android:name=".ForgotPasswordActivity"
             android:label="Forgot Password" />
@@ -46,13 +43,12 @@
             android:name=".ViewCategoryActivity"
             android:label="@string/category_view" />
         <activity android:name=".BookDetailsActivity" />
-
         <activity android:name=".BookReaderActivity" />
         <activity android:name=".BookOfflineActivity" />
         <activity android:name=".CategoryWiseBookActivity" />
         <activity android:name=".RequestBookActivity" />
         <activity android:name=".RequestBookListActivity" />
-        <activity android:name=".AboutAppActivity"></activity>
+        <activity android:name=".AboutAppActivity" />
 
         <service android:name=".FirebaseNotificationToken">
             <intent-filter>
@@ -67,6 +63,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
+        <activity android:name=".DeveloperActivity"></activity>
     </application>
 
 </manifest>
