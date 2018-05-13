@@ -239,7 +239,7 @@ public class AddBookActivity extends AppCompatActivity implements View.OnClickLi
 
                                         double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
                                         Log.e("TAG UPLOAD", taskSnapshot.getBytesTransferred() + "  " + progress + "====" + (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount());
-                                        //   textViewStatus.setText("" + progress + "% Uploading...");
+                                           textViewStatus.setText("" + progress + "% Uploading...");
                                     }
                                 });
 

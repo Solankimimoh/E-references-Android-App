@@ -54,7 +54,7 @@ public class BookReaderActivity extends AppCompatActivity implements OnLoadCompl
 
     @Override
     public void onPageChanged(int page, int pageCount) {
-        Toast.makeText(this, (page + 1) + " / " + pageCount, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, (page + 1) + " / " + pageCount, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package ereferences.example.com;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -7,6 +8,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -55,6 +57,7 @@ public class HomeActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
 
         auth = FirebaseAuth.getInstance();
         DataRef = FirebaseDatabase.getInstance().getReference();
@@ -119,7 +122,7 @@ public class HomeActivity extends AppCompatActivity
         fetchImages();
 
         MultiSnapRecyclerView firstRecyclerView = (MultiSnapRecyclerView) findViewById(R.id.first_recycler_view);
-        LinearLayoutManager firstManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        LinearLayoutManager firstManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, true);
         firstRecyclerView.setLayoutManager(firstManager);
         firstRecyclerView.setAdapter(bookThumbAdapter);
         Log.e("LIST", bookDataModelArrayList.toString());
@@ -243,8 +246,30 @@ public class HomeActivity extends AppCompatActivity
             final Intent gotoViewCategory = new Intent(HomeActivity.this, ViewCategoryActivity.class);
             startActivity(gotoViewCategory);
         } else if (id == R.id.menu_signout) {
-            auth.signOut();
-            finish();
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this);
+
+            builder.setMessage("Do you want to log out?")
+                    .setCancelable(false)
+                    .setPositiveButton("Sign out", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            auth.signOut();
+                            finish();
+                        }
+                    });
+            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+
+            AlertDialog alertDialog = builder.create();
+
+            alertDialog.setTitle("Account Action");
+            alertDialog.show();
+
         } else if (id == R.id.menu_download_book) {
             final Intent gotoOfflineBook = new Intent(HomeActivity.this, BookOfflineActivity.class);
             startActivity(gotoOfflineBook);

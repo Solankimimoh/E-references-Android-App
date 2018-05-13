@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -61,8 +60,6 @@ public class CategoryWiseBookActivity extends AppCompatActivity implements Categ
                             bookDataModel.setThumbUrl(bookListSnapshot.child("thumbUrl").getValue().toString());
                             bookDataModelArrayList.add(bookDataModel);
                             categoryWiseBookAdapter.notifyDataSetChanged();
-                        } else {
-                            Toast.makeText(CategoryWiseBookActivity.this, "No Books Available for this category", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
